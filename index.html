@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Moral Compass</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6 text-gray-800 font-sans min-h-screen">
+  <div class="max-w-xl mx-auto">
+    <h1 class="text-3xl font-bold mb-4">Moral Compass</h1>
+    <div class="bg-white p-4 rounded shadow">
+      <p class="mb-2" id="prompt">Loading daily ethical prompt...</p>
+      <textarea id="reflection" class="w-full border rounded p-2 mt-2" rows="4" placeholder="Your reflection..."></textarea>
+      <button onclick="saveEntry()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save Entry</button>
+    </div>
+    <div class="mt-6">
+      <h2 class="text-xl font-semibold">Your Reflections</h2>
+      <ul id="entries" class="mt-2 space-y-2"></ul>
+    </div>
+  </div>
+
+  <script>
+    const prompts = [
+      "You witness a friend cheating on an exam. Do you report them?",
+      "You find a wallet with money and ID on the street. What do you do?",
+      "Your company asks you to lie to a client. How do you respond?",
+      "You can help someone, but it costs you time. Do you help?",
+      "You learn a friend’s partner is unfaithful. Do you tell them?"
+    ];
+    const promptElement = document.getElementById('prompt');
+    const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+    promptElement.innerText = randomPrompt;
+
+    function saveEntry() {
+      const entry = {
+        prompt: randomPrompt,
+        reflection: document.getElementById('reflection').value,
+        date: new Date().toLocaleDateString()
+      };
+      let entries = JSON.parse(localStorage.getItem('moralEntries')) || [];
+      entries.push(entry);
+      localStorage.setItem('moralEntries', JSON.stringify(entries));
+      loadEntries();
+      document.getElementById('reflection').value = '';
+    }
+
+    function loadEntries() {
+      const entriesList = document.getElementById('entries');
+      entriesList.innerHTML = '';
+      const entries = JSON.parse(localStorage.getItem('moralEntries')) || [];
+      entries.forEach(entry => {
+        const li = document.createElement('li');
+        li.className = 'bg-white p-3 rounded shadow';
+        li.innerHTML = `<strong>${entry.date}</strong><br><em>${entry.prompt}</em><br>${entry.reflection}`;
+        entriesList.appendChild(li);
+      });
+    }
+
+    loadEntries();
+  </script>
+</body>
+</html>
